@@ -22,9 +22,10 @@ component displayname="user defined functions" output="false" {
         return qryBooks;
     }
 
-    private query function getDefaultList() {
-        var myDefaultData = queryNew(data=[
-                                {"id":1, "title":"Title 1", "author":"Author 1"}
+    private query function getDefaultList(numeric noOfRows = 10) {
+
+        var myDefaultData = queryNew("id, title, author", "integer, varchar, varchar"
+                                , [{"id":1, "title":"Title 1", "author":"Author 1"}
                                 , {"id":2, "title":"Title 2", "author":"Author 2"}
                                 , {"id":3, "title":"Title 3", "author":"Author 3"}
                                 , {"id":4, "title":"Title 4", "author":"Author 4"}
@@ -49,9 +50,17 @@ component displayname="user defined functions" output="false" {
                                 , {"id":23, "title":"Title 23", "author":"Author 23"}
                                 , {"id":24, "title":"Title 24", "author":"Author 24"}
                                 , {"id":25, "title":"Title 25", "author":"Author 25"}
-
                             ]);
-        return myDefaultData;
+        var noOfRowsToTake = arguments.noOfRows;
+        var filteredData = myDefaultData;
+
+        if (noOfRowsToTake GT 0) {
+            var filteredData = QueryFilter(myDefaultData, function(ro){
+                            return ro.id <= noOfRowsToTake
+                        });
+        }
+
+        return filteredData;
     }
 
     private string function isDSNExists ( required string dsn) {
